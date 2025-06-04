@@ -12,9 +12,10 @@ class HomeController extends Controller
         if ($request->user()) {
             // If authenticated, redirect to home page
             $category = $request->query('category');
-            $categories = $this->get_subcategories($category);
             return Inertia::render('home', [
-                'categories' => $categories
+                'category' => $category,
+                'sub_categories' => $this->get_subcategories($category),
+                'posts' => $this->get_posts_in_category($category)
             ]);
         }
         else
@@ -29,5 +30,12 @@ class HomeController extends Controller
         // This function should return subcategories based on the category
         // For now, it returns an empty array
         return ['Hardware', 'Software', 'Networking', 'Security'];
+    }
+
+    private function get_posts_in_category($category)
+    {
+        // This function should return posts based on the category
+        // For now, it returns an empty array
+        return [];
     }
 }
