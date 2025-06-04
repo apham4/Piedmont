@@ -16,4 +16,19 @@ class Post extends Model
         'category_id', // Category of the post
         'content', // Content of the post
     ];
+
+    public function poster()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'post_id');
+    }
 }

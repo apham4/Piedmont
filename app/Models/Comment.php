@@ -15,4 +15,14 @@ class Comment extends Model
         'post_id', // Title of the post this comment is on
         'content', // Content of the comment
     ];
+
+    public function commenter()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function post()
+    {
+        return $this->belongsTo(Post::class, 'post_id');
+    }
 }

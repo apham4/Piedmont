@@ -15,4 +15,9 @@ class Category extends Model
         'description', // Description of the category
         'child_of' // ID of the parent category, if this is a subcategory
     ];
+
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'child_of');
+    }
 }
