@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Comment extends Model
+{
+    /** @use HasFactory<\Database\Factories\CommentFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id', // ID of the user who created the comment
+        'post_id', // Title of the post this comment is on
+        'content', // Content of the comment
+    ];
+}
