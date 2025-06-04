@@ -25,5 +25,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 //     Route::post('/orders', 'store');
 // });
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('newpost', [PostController::class, 'create'])->name('post.create');
+    Route::post('newpost', [PostController::class, 'store'])->name('post.store');
+
+    Route::get('post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
+    Route::post('post/{id}', [PostController::class, 'update'])->name('post.update');
+
+    Route::get('post/{id}', [PostController::class, 'show'])->name('post.show');
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
