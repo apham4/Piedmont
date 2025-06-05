@@ -31,4 +31,9 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class, 'post_id');
     }
+
+    public function reactions()
+    {
+        return $this->hasMany(Reactions::class, 'content_id')->where('content_type', 1);
+    }
 }

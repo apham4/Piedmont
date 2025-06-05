@@ -31,7 +31,7 @@ export default function Home() {
                     </header>
                     <button
                         className="self-start mb-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition"
-                        onClick={() => window.location.href = route('posts.create')}
+                        onClick={() => window.location.href = route('post.create')}
                     >
                         Create Discussion Post
                     </button>

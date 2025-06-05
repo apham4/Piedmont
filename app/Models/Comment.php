@@ -25,4 +25,9 @@ class Comment extends Model
     {
         return $this->belongsTo(Post::class, 'post_id');
     }
+
+    public function reactions()
+    {
+        return $this->hasMany(Reactions::class, 'content_id')->where('content_type', 2);
+    }
 }
