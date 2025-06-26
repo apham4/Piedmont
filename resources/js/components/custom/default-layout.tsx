@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import appIcon from 'resources/assets/placeholder_icon.png';
 
 interface DefaultLayoutProps {
     title?: string;
@@ -15,7 +16,13 @@ export default function DefaultLayout({ title, body }: DefaultLayoutProps) {
             <div className="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:justify-center lg:p-8 dark:bg-[#0a0a0a]">
                 <header className="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl">
                     <nav className="flex items-center justify-begin gap-4">
-                        App Name & Logo
+                        <Link href={route('home')}>
+                            <img
+                                src={appIcon}
+                                alt="App Logo"
+                                className="h-10 w-10 object-contain cursor-pointer"
+                            />
+                        </Link>
                     </nav>
                     <nav className="flex items-center justify-end gap-4">
                         <Link

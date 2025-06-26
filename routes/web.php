@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/category/{id?}', [HomeController::class, 'index'])->name('home.category');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

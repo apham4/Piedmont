@@ -19,9 +19,19 @@ class PostController extends Controller
     {
         // Fetch the post by ID and return it
         $post = Post::with(['poster', 'category', 'comments', 'comments.user', 'reactions'])->findOrFail($id);
+        
+        $breadcrumbs = [];
+        $current = $post->category;
+        while ($current) 
+        {
+            $breadcrumbs[] = $current;
+            $current = $current->parent;
+        }
+        $breadcrumbs = array_reverse($breadcrumbs);
 
         return Inertia::render('post/postview', [
             'post' => $post,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

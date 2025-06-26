@@ -1,5 +1,4 @@
-import { usePage } from '@inertiajs/react';
-import { router, useForm } from '@inertiajs/react';
+import { usePage, router, useForm, Link } from '@inertiajs/react';
 import DefaultLayout from '@/components/custom/default-layout';
 
 interface User {
@@ -18,6 +17,12 @@ interface Post {
     comments?: Comment[];
 }
 
+interface Category {
+    id: number;
+    name?: string;
+    description?: string;
+}
+
 interface Comment {
     id: number;
     user: User;
@@ -34,7 +39,7 @@ interface Reaction {
 
 export default function Home() {
     const { post = {} as Post } = usePage().props as { post?: Post };
-
+    const { breadcrumbs = [] } = usePage().props as { breadcrumbs?: Category[] };
     const { data, setData, post: submit, processing, errors, reset } = useForm({
         content: '',
     });
@@ -69,6 +74,32 @@ export default function Home() {
             title = {post ? post.title : "View Post"}
             body = {
                 <div className="w-full">
+                    {/* Breadcrumbs */}
+                    {breadcrumbs.length > 0 && (
+                        <nav className="mb-2 text-sm text-gray-500 flex flex-wrap gap-1 items-center">
+                            <span className="flex items-center">
+                                <Link
+                                    href={route('home')}
+                                    className="hover:underline text-blue-700"
+                                >
+                                    Home
+                                </Link>
+                                {breadcrumbs.length > 0 && <span className="mx-1">/</span>}
+                            </span>
+                            {breadcrumbs.map((crumb, idx) => (
+                                <span key={crumb.id} className="flex items-center">
+                                    <Link
+                                        href={route('home.category', { id: crumb.id })}
+                                        className="hover:underline text-blue-700"
+                                    >
+                                        {crumb.name}
+                                    </Link>
+                                    {idx < breadcrumbs.length - 1 && <span className="mx-1">/</span>}
+                                </span>
+                            ))}
+                        </nav>
+                    )}
+
                     {/* Post Title */}
                     <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
                     
