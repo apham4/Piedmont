@@ -11,7 +11,7 @@ use Inertia\Response;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\Comment;
-use App\Models\Reactions;
+use App\Models\Reaction;
 
 class PostController extends Controller
 {
@@ -58,5 +58,53 @@ class PostController extends Controller
         ]);
 
         return redirect()->route('post.show', ['id' => $post->id]);
+    }
+
+    public function addReaction(Request $request, int $postId, int $reactionType)
+    {
+        $userId = auth()->id();
+
+        $existing = Reaction::where([
+            'user_id' => $userId,
+            'content_id' => $postId,
+            'content_type' => 1,
+            'reaction_type' => $reactionType,
+        ])->first();
+
+        if ($existing) 
+        {
+            $existing->delete();
+        } else 
+        {
+            Reaction::create([
+                'user_id' => $userId,
+                'content_id' => $postId,
+                'content_type' => 1,
+                'reaction_type' => $reactionType,
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    public function addComment(Request $request, int $postId)
+    {
+        $data = $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        Comment::create([
+            'user_id' => auth()->id(),
+            'post_id' => $postId,
+            'content' => $data['content'],
+        ]);
+
+        // Reload only the comments and clear the form
+        $post = Post::with(['comments.user'])->findOrFail($postId);
+
+        return redirect()->route('post.show', ['id' => $postId])
+            ->with([
+                'comments' => $post->comments,
+            ]);
     }
 }

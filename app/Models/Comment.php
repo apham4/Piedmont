@@ -16,7 +16,7 @@ class Comment extends Model
         'content', // Content of the comment
     ];
 
-    public function commenter()
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
@@ -28,6 +28,6 @@ class Comment extends Model
 
     public function reactions()
     {
-        return $this->hasMany(Reactions::class, 'content_id')->where('content_type', 2);
+        return $this->hasMany(Reaction::class, 'content_id')->where('content_type', 2);
     }
 }

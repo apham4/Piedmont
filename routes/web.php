@@ -34,6 +34,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('post/{id}', [PostController::class, 'update'])->name('post.update');
 
     Route::get('post/{id}', [PostController::class, 'show'])->name('post.show');
+
+    Route::post('/posts/{postId}/react/{reactionType}', [PostController::class, 'addReaction'])->name('post.react');
+    Route::post('/posts/{postId}/comment', [PostController::class, 'addComment'])->name('post.addComment');
 });
 
 require __DIR__.'/settings.php';

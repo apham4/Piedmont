@@ -1,4 +1,5 @@
 import { usePage } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import DefaultLayout from '@/components/custom/default-layout';
 
 interface User {
@@ -33,6 +34,35 @@ interface Reaction {
 
 export default function Home() {
     const { post = {} as Post } = usePage().props as { post?: Post };
+
+    const { data, setData, post: submit, processing, errors, reset } = useForm({
+        content: '',
+    });
+
+    // Sort comments by newest updated_at
+    const sortedComments = post.comments
+        ? [...post.comments].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+        : [];
+
+    const handleReaction = (type: number) => {
+        router.post(route('post.react', { postId: post.id, reactionType: type }), {}, {
+            preserveScroll: true,
+            only: ['post'], // Only reload the 'post' prop
+        });
+    };
+
+    const handleCommentSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.post(
+            route('post.addComment', { postId: post.id }),
+            { content: data.content },
+            {
+                preserveScroll: true,
+                only: ['post'], // Only reload the 'post' prop (which should include comments)
+                onSuccess: () => reset('content'), // Clear the form field
+            }
+        );
+    };
     
     return (
         <DefaultLayout
@@ -63,7 +93,7 @@ export default function Home() {
                     <div className="flex items-center gap-4 mb-6">
                         <button
                             className="flex items-center px-3 py-1 bg-blue-100 rounded hover:bg-blue-200"
-                            onClick={() => { /* placeholder like */ }}
+                            onClick={() => handleReaction(1)}
                         >
                             👍 <span className="ml-1">
                                     {post.reactions ? post.reactions.filter(r => r.reaction_type === 1).length : 0}
@@ -71,7 +101,7 @@ export default function Home() {
                         </button>
                         <button
                             className="flex items-center px-3 py-1 bg-red-100 rounded hover:bg-red-200"
-                            onClick={() => { /* placeholder dislike */ }}
+                            onClick={() => handleReaction(2)}
                         >
                             👎 <span className="ml-1">
                                     {post.reactions ? post.reactions.filter(r => r.reaction_type === 2).length : 0}
@@ -79,31 +109,33 @@ export default function Home() {
                         </button>
                     </div>
                     
-                    {/* Add Comment Form */}
-                    <form
-                        className="mb-8 flex gap-2"
-                        onSubmit={e => {
-                            e.preventDefault();
-                            // placeholder submit
-                        }}
-                    >
+                    {/* Comment Form */}
+                    <form className="mt-8 flex gap-2" onSubmit={handleCommentSubmit}>
                         <input
                             type="text"
-                            className="flex-1 border rounded px-2 py-1"
+                            name="content"
+                            value={data.content}
+                            onChange={e => setData('content', e.target.value)}
+                            className="flex-1 border rounded px-3 py-2"
                             placeholder="Add a comment..."
+                            disabled={processing}
                         />
                         <button
                             type="submit"
-                            className="bg-blue-500 text-white px-4 py-1 rounded"
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                            disabled={processing}
                         >
                             Submit
                         </button>
                     </form>
+                    {errors.content && <div className="text-red-500 text-sm">{errors.content}</div>}
                     
+                    <div className="h-6" />
+
                     {/* Comments */}
                     <div>
-                        {post.comments && post.comments.length > 0 ? (
-                            post.comments.map((comment: any) => (
+                        {sortedComments && sortedComments.length > 0 ? (
+                            sortedComments.map((comment: any) => (
                                 <div
                                     key={comment.id}
                                     className="border rounded p-3 mb-4 bg-gray-50"
