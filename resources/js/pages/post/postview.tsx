@@ -37,7 +37,7 @@ interface Reaction {
     reaction_type: number; // 1 = like, 2 = dislike
 }
 
-export default function Home() {
+export default function Post() {
     const { post = {} as Post } = usePage().props as { post?: Post };
     const { breadcrumbs = [] } = usePage().props as { breadcrumbs?: Category[] };
     const { data, setData, post: submit, processing, errors, reset } = useForm({

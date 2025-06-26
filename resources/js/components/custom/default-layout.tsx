@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import appIcon from 'resources/assets/placeholder_icon.png';
 
 interface DefaultLayoutProps {
@@ -6,7 +6,13 @@ interface DefaultLayoutProps {
     body?: React.ReactNode;
 }
 
+interface User {
+    id: number;
+    name: string;
+}
+
 export default function DefaultLayout({ title, body }: DefaultLayoutProps) {
+    const { user = {} as User } = usePage().props as { user?: User };
     return (
         <>
             <Head title={title}>
@@ -26,10 +32,11 @@ export default function DefaultLayout({ title, body }: DefaultLayoutProps) {
                     </nav>
                     <nav className="flex items-center justify-end gap-4">
                         <Link
-                        href={route('dashboard')}
+                        // href={route('dashboard')}
+                        href={route('user.show', { id: user.id })}
                         className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
                         >
-                            Profile
+                            {user.name || 'Unknown User'}
                         </Link>
                     </nav>
                 </header>
