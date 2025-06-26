@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { usePage, useForm } from '@inertiajs/react';
 import DefaultLayout from '@/components/custom/default-layout';
 
 interface Post {
@@ -12,6 +12,8 @@ export default function Home() {
         category: '',
         content: '',
     });
+
+    const { categorySuggestions = [] } = usePage().props as { categorySuggestions?: string[] };
 
     const handle_submit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -55,7 +57,13 @@ export default function Home() {
                                 value={data.category}
                                 onChange={e => setData('category', e.target.value)}
                                 className="w-full border rounded px-3 py-2"
+                                list="category-suggestions"
                             />
+                            <datalist id="category-suggestions">
+                                {categorySuggestions?.map((path: string) => (
+                                    <option key={path} value={path} />
+                                ))}
+                            </datalist>
                             {errors.category && <div className="text-red-500 text-sm">{errors.category}</div>}
                         </div>
                         <div>

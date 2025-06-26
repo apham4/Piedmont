@@ -37,7 +37,19 @@ class PostController extends Controller
 
     public function create(Request $request): Response
     {
-        return Inertia::render('post/postform');
+        $categorySuggestions = Category::all()->map(function($cat) {
+            $breadcrumbs = [];
+            $current = $cat;
+            while ($current) {
+                $breadcrumbs[] = $current->name;
+                $current = $current->parent;
+            }
+            return implode(' > ', array_reverse($breadcrumbs));
+        })->unique()->values();
+
+        return Inertia::render('post/postform', [
+            'categorySuggestions' => $categorySuggestions,
+        ]);
     }
 
     public function store(Request $request)
