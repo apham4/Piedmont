@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import DefaultLayout from '@/components/custom/default-layout';
+import PostEntry from '@/components/custom/post-entry';
 
 interface User {
     id: number;
@@ -71,11 +72,12 @@ export default function UserView() {
                                 Edit Profile
                             </button>
                         )}
-                </div>
-                    <div className="mb-6">
-                        <span className="font-semibold">User Points:</span> <span>{userPoints}</span>
                     </div>
                     <div className="space-y-3">
+                        <div>
+                            <span className="font-semibold">User Points:</span>{' '}
+                            {userPoints}
+                        </div>
                         <div>
                             <span className="font-semibold">Date of Birth:</span>{' '}
                             {user.is_dob_public
@@ -93,6 +95,16 @@ export default function UserView() {
                             {user.is_bio_public
                                 ? user.bio || <span className="italic text-gray-500">Not set</span>
                                 : <span className="italic text-gray-500">Private</span>}
+                        </div>
+                    </div>
+                    <div className="mt-6">
+                        <h2 className="text-xl font-semibold mb-2">Posts by {user ? user.name : 'this user'}</h2>
+                        <div className="space-y-4">
+                            {posts.map(post => (
+                                <PostEntry 
+                                    post={post}
+                                    user={user} />
+                            ))}
                         </div>
                     </div>
                 </div>

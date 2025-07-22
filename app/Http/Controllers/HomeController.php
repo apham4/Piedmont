@@ -7,6 +7,7 @@ use Inertia\Inertia;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -22,6 +23,12 @@ class HomeController extends Controller
                 $sub_categories = Category::where('child_of', $id)->get();
                 $posts = Post::where('category_id', $id)->get();
 
+                // Get unique user IDs from posts
+                $userIds = $posts->pluck('user_id')->unique()->filter()->all();
+
+                // Query users
+                $users = User::whereIn('id', $userIds)->get();
+
                 $current = $category;
                 while ($current) {
                     $breadcrumbs[] = $current;
@@ -35,6 +42,7 @@ class HomeController extends Controller
                 $category = null;
                 $sub_categories = Category::whereNull('child_of')->get();
                 $posts = [];
+                $users = [];
             }
 
             return Inertia::render('home', [
@@ -42,6 +50,7 @@ class HomeController extends Controller
                 'sub_categories' => $sub_categories,
                 'breadcrumbs' => $breadcrumbs,
                 'posts' => $posts,
+                'users' => $users,
             ]);
         }
         else

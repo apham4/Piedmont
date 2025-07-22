@@ -1,5 +1,6 @@
 import { usePage, router, Link } from '@inertiajs/react';
 import DefaultLayout from '@/components/custom/default-layout';
+import PostEntry from '@/components/custom/post-entry';
 
 interface Category {
     id: number;
@@ -13,11 +14,17 @@ interface Post {
     title?: string;
 }
 
+interface User {
+    id: number;
+    name?: string;
+}
+
 export default function Home() {
     const { category = {} } = usePage().props as { category?: Category };
     const { sub_categories = [] } = usePage().props as { sub_categories?: Category[] };
     const { breadcrumbs = [] } = usePage().props as { breadcrumbs?: Category[] };
     const { posts = [] } = usePage().props as { posts?: Post[] };
+    const { users = [] } = usePage().props as { users?: User[] };
     
     return (
         <DefaultLayout
@@ -91,16 +98,15 @@ export default function Home() {
                         </div>
                     ) : (
                         <div className="flex flex-col gap-3 w-full">
-                            {posts.map((post) => (
-                                <button
-                                    key={post.id}
-                                    className="w-full text-left rounded border border-gray-300 px-3 py-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800"
-                                    onClick={() => router.visit(route('post.show', { id: post.id }))}
-                                >
-                                    <div className="text-lg font-medium">{post.title}</div>
-                                    <div className="text-xs text-gray-500">By: {post.user_id}</div>
-                                </button>   
-                            ))}
+                            {posts.map((post) => {
+                                const user = users.find(u => u.id === post.user_id);
+                                return (
+                                    <PostEntry
+                                        post={post}
+                                        user={user}
+                                    />
+                                );
+                            })}
                         </div>
                     )}
                 </div>
