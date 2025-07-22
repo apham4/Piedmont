@@ -66,6 +66,7 @@ export default function UserView() {
                             <button
                                 className="ml-4 px-4 py-2 rounded bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition"
                                 aria-label="Edit Profile"
+                                onClick={() => window.location.href = route('user.edit', user.id)}
                             >
                                 Edit Profile
                             </button>

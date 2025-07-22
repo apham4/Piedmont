@@ -31,6 +31,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('user/{id}', [UserController::class, 'show'])->name('user.show');
+    Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::post('/user/{id}/edit', [UserController::class, 'update'])->name('user.update');
 });
 
 require __DIR__.'/settings.php';

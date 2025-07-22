@@ -53,4 +53,41 @@ class UserController extends Controller
             ],
         ]);
     }
+
+    public function edit(Request $request, int $id)
+    {
+        $authUser = $request->user();
+        if ($authUser->id !== $id) {
+            abort(403, 'Unauthorized action.');
+        }
+        else
+        {
+            return Inertia::render('user/useredit', [
+                'user' => $authUser,
+            ]);
+        }
+    }
+
+    public function update(Request $request, int $id)
+    {
+        $authUser = $request->user();
+        if ($authUser->id !== $id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'dob' => 'nullable|date',
+            'is_dob_public' => 'boolean',
+            'location' => 'nullable|string|max:255',
+            'is_location_public' => 'boolean',
+            'bio' => 'nullable|string|max:500',
+            'is_bio_public' => 'boolean',
+        ]);
+
+        $authUser->update($data);
+
+        return redirect()->route('user.show', ['id' => $authUser->id])
+                         ->with('success', 'Profile updated successfully.');
+    }
 }
