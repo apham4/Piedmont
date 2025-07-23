@@ -49,11 +49,23 @@ export default function Post() {
         ? [...post.comments].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
         : [];
 
-    const handleReaction = (type: number) => {
-        router.post(route('post.react', { postId: post.id, reactionType: type }), {}, {
-            preserveScroll: true,
-            only: ['post'], // Only reload the 'post' prop
+    const handleReaction = (contentId: number, contentType: number, reactionType: number) => {
+        if (contentType !== 1 && contentType !== 2) return; // Ensure valid content type
+        if (contentType === 1)
+        {
+            router.post(route('post.react', { postId: contentId, reactionType: reactionType }), {}, {
+                preserveScroll: true,
+                only: ['post'], // Only reload the 'post' prop
         });
+        }
+        else if (contentType === 2)
+        {
+            router.post(route('comment.react', { commentId: contentId, reactionType: reactionType }), {}, {
+                preserveScroll: true,
+                only: ['post'], // Only reload the 'post' prop (which should include comments)
+            });
+        }
+        
     };
 
     const handleCommentSubmit = (e: React.FormEvent) => {
@@ -124,7 +136,7 @@ export default function Post() {
                     <div className="flex items-center gap-4 mb-6">
                         <button
                             className="flex items-center px-3 py-1 bg-blue-100 rounded hover:bg-blue-200"
-                            onClick={() => handleReaction(1)}
+                            onClick={() => handleReaction(post.id, 1, 1)}
                         >
                             👍 <span className="ml-1">
                                     {post.reactions ? post.reactions.filter(r => r.reaction_type === 1).length : 0}
@@ -132,7 +144,7 @@ export default function Post() {
                         </button>
                         <button
                             className="flex items-center px-3 py-1 bg-red-100 rounded hover:bg-red-200"
-                            onClick={() => handleReaction(2)}
+                            onClick={() => handleReaction(post.id, 1, 2)}
                         >
                             👎 <span className="ml-1">
                                     {post.reactions ? post.reactions.filter(r => r.reaction_type === 2).length : 0}
@@ -178,6 +190,24 @@ export default function Post() {
                                             : ""}
                                     </div>
                                     <div>{comment.content}</div>
+                                    <div className="flex items-center gap-4 mt-2">
+                                        <button
+                                            className="flex items-center px-2 py-1 bg-blue-100 rounded hover:bg-blue-200"
+                                            onClick={() => handleReaction(comment.id, 2, 1)}
+                                        >
+                                            👍 <span className="ml-1">
+                                                {comment.reactions ? comment.reactions.filter((r: any) => r.reaction_type === 1).length : 0}
+                                            </span>
+                                        </button>
+                                        <button
+                                            className="flex items-center px-2 py-1 bg-red-100 rounded hover:bg-red-200"
+                                            onClick={() => handleReaction(comment.id, 2, 2)}
+                                        >
+                                            👎 <span className="ml-1">
+                                                {comment.reactions ? comment.reactions.filter((r: any) => r.reaction_type === 2).length : 0}
+                                            </span>
+                                        </button>
+                                    </div>
                                 </div>
                             ))
                         ) : (

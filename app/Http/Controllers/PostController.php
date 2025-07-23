@@ -18,7 +18,7 @@ class PostController extends Controller
     public function show(Request $request, int $id): Response
     {
         // Fetch the post by ID and return it
-        $post = Post::with(['poster', 'category', 'comments', 'comments.user', 'reactions'])->findOrFail($id);
+        $post = Post::with(['poster', 'category', 'comments', 'comments.user', 'comments.reactions', 'reactions'])->findOrFail($id);
         
         $breadcrumbs = [];
         $current = $post->category;
@@ -31,6 +31,7 @@ class PostController extends Controller
 
         return Inertia::render('post/postview', [
             'post' => $post,
+            'comments' => $post->comments,
             'breadcrumbs' => $breadcrumbs,
         ]);
     }

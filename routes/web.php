@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CommentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/category/{id?}', [HomeController::class, 'index'])->name('home.category');
@@ -27,6 +28,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/posts/{postId}/react/{reactionType}', [PostController::class, 'addReaction'])->name('post.react');
     Route::post('/posts/{postId}/comment', [PostController::class, 'addComment'])->name('post.addComment');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/comment/{commentId}/react/{reactionType}', [CommentController::class, 'addReaction'])->name('comment.react');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
