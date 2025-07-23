@@ -38,8 +38,15 @@ interface Reaction {
 }
 
 export default function Post() {
-    const { post = {} as Post } = usePage().props as { post?: Post };
-    const { breadcrumbs = [] } = usePage().props as { breadcrumbs?: Category[] };
+    const { 
+        post = { id: 0, title: '', content: '', created_at: '', updated_at: '', poster: { id: 0, name: '' }, reactions: [], comments: [] }, 
+        breadcrumbs = [], 
+        auth = { user: { id: 0, name: '' }}
+    } = usePage().props as {
+        post?: Post;
+        breadcrumbs?: Category[];
+        auth?: { user?: User };
+    };
     const { data, setData, post: submit, processing, errors, reset } = useForm({
         content: '',
     });
@@ -112,18 +119,29 @@ export default function Post() {
                         </nav>
                     )}
 
-                    {/* Post Title */}
-                    <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
+                    {/* Post Title Row with Edit Button */}
+                    <div className="flex items-center justify-between mb-2">
+                        <h1 className="text-3xl font-bold">{post.title}</h1>
+                        {(post.poster.id === auth.user.id &&
+                            (new Date().getTime() - new Date(post.created_at).getTime()) < 60 * 60 * 1000) && (
+                            <button
+                                className="ml-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                                onClick={() => router.visit(route('post.edit', { id: post.id }))}
+                            >
+                                Edit Post
+                            </button>
+                        )}
+                    </div>
                     
                     {/* Poster Name */}
                     <div className="text-sm text-gray-600 mb-1">
-                        {post.poster.name || "Unknown User"}
+                        {post?.poster.name || "Unknown User"}
                     </div>
                     
                     {/* Created/Edited Time */}
                     <div className="text-xs text-gray-400 mb-4">
                         {post.created_at
-                            ? post.updated_at && post.updated_at !== post.created_at
+                            ? post.updated_at && post?.updated_at !== post.created_at
                                 ? `Edited: ${new Date(post.updated_at).toLocaleString()}`
                                 : `Posted: ${new Date(post.created_at).toLocaleString()}`
                             : ""}
@@ -160,7 +178,7 @@ export default function Post() {
                             value={data.content}
                             onChange={e => setData('content', e.target.value)}
                             className="flex-1 border rounded px-3 py-2"
-                            placeholder="Add a comment..."
+                            placeholder={`Add a comment as ${auth?.user?.name || "Unknown User"}...`}
                             disabled={processing}
                         />
                         <button

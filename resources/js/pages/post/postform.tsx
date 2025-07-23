@@ -2,22 +2,35 @@ import { usePage, useForm } from '@inertiajs/react';
 import DefaultLayout from '@/components/custom/default-layout';
 
 interface Post {
-    user_id?: number;
-    title?: string;
+    id: number;
+    title: string;
+    content: string;
+    created_at: string;
+    updated_at: string;
 }
 
-export default function Home() {
-    const { data, setData, post: submit, processing, errors } = useForm({
-        title: '',
-        category: '',
-        content: '',
-    });
+export default function PostForm() {
+    const { categorySuggestions = [], post, postCategory } = usePage().props as { 
+        categorySuggestions?: string[]; 
+        post?: Post;  
+        postCategory?: string;
+    };
 
-    const { categorySuggestions = [] } = usePage().props as { categorySuggestions?: string[] };
+    // Initialize form data with post details if available
+    const { data, setData, post: submit, processing, errors } = useForm({
+        title: post?.title || '',
+        category: postCategory || '',
+        content: post?.content || '',
+    });
 
     const handle_submit = (e: React.FormEvent) => {
         e.preventDefault();
-        submit(route('post.store'));
+        // if post is undefined then route to post.store, otherwise route to post.update
+        if (!post) {
+            submit(route('post.store'));
+        } else {
+            submit(route('post.update', { id: post.id }));
+        }
     };
 
     return (
@@ -26,7 +39,7 @@ export default function Home() {
             body={
                 <>
                     <h1 className="text-2xl font-bold">
-                        Submit a Discussion Thread
+                        {post ? 'Edit the Discussion Post' : 'Submit a Discussion Thread'}
                     </h1>
                     <form className="space-y-4 w-full"
                         onSubmit={handle_submit}>
