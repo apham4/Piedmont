@@ -27,7 +27,19 @@ export default function PostEntry({ post, user }: PostEntryProps) {
                 onClick={() => router.visit(route('post.show', { id: post.id }))}
             >
                 <div className="text-lg font-medium">{post.title}</div>
-                <div className="text-xs text-gray-500">By: {user?.name || 'Unknown User'}</div>
+                <div className="text-xs text-gray-500">
+                    By: {user?.id ? (
+                        <a
+                            href={route('user.show', { id: user.id })}
+                            className="text-blue-600 hover:underline"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {user.name}
+                        </a>
+                    ) : (
+                        'Unknown User'
+                    )}
+                </div>
             </button>
         </>
     );

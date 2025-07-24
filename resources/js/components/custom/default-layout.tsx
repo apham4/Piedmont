@@ -1,4 +1,5 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
+import { useState, useRef, useEffect } from 'react';
 import appIcon from 'resources/assets/logo.png';
 
 interface DefaultLayoutProps {
@@ -13,6 +14,30 @@ interface User {
 
 export default function DefaultLayout({ title, body }: DefaultLayoutProps) {
     const { user = {} as User, appName } = usePage().props as { user?: User; appName?: string };
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    // Close menu on outside click
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setMenuOpen(false);
+            }
+        }
+        if (menuOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [menuOpen]);
+
+    const handleLogout = () => {
+        router.post(route('logout'), {}, {
+            onSuccess: () => router.visit(route('welcome'))
+        });
+    };
+
     return (
         <>
             <Head title={title}>
@@ -34,13 +59,33 @@ export default function DefaultLayout({ title, body }: DefaultLayoutProps) {
                                 </span>
                             </Link>
                         </nav>
-                        <nav className="flex items-center gap-4">
-                            <Link
-                                href={route('user.show', { id: user.id })}
+                        <nav className="flex items-center gap-4 relative">
+                            <button
+                                onClick={() => setMenuOpen((open) => !open)}
                                 className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
                             >
                                 {user.name || 'Unknown User'}
-                            </Link>
+                            </button>
+                            {menuOpen && (
+                                <div
+                                    ref={menuRef}
+                                    className="absolute right-0 mt-2 w-40 bg-white dark:bg-[#232323] border border-gray-200 dark:border-gray-700 rounded shadow-lg z-50"
+                                >
+                                    <Link
+                                        href={route('user.show', { id: user.id })}
+                                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        Profile
+                                    </Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                    >
+                                        Log Out
+                                    </button>
+                                </div>
+                            )}
                         </nav>
                     </div>
                 </header>

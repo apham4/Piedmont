@@ -135,7 +135,17 @@ export default function Post() {
                     
                     {/* Poster Name */}
                     <div className="text-sm text-gray-600 mb-1">
-                        {post?.poster.name || "Unknown User"}
+                        By:{" "}
+                        {post?.poster?.id ? (
+                            <Link
+                                href={route('user.show', { id: post.poster.id })}
+                                className="text-blue-600 hover:underline"
+                            >
+                                {post.poster.name}
+                            </Link>
+                        ) : (
+                            "Unknown User"
+                        )}
                     </div>
                     
                     {/* Created/Edited Time */}
@@ -201,7 +211,18 @@ export default function Post() {
                                     key={comment.id}
                                     className="border rounded p-3 mb-4 bg-gray-50"
                                 >
-                                    <div className="font-semibold text-sm">{comment.user?.name || "Unknown User"}</div>
+                                    <div className="font-semibold text-sm">
+                                        {comment.user?.id ? (
+                                            <Link
+                                                href={route('user.show', { id: comment.user.id })}
+                                                className="text-blue-600 hover:underline"
+                                            >
+                                                {comment.user.name}
+                                            </Link>
+                                        ) : (
+                                            "Unknown User"
+                                        )}
+                                    </div>
                                     <div className="text-xs text-gray-400 mb-1">
                                         {comment.updated_at
                                             ? new Date(comment.updated_at).toLocaleString()
