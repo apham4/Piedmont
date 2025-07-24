@@ -3,7 +3,6 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import appIcon from 'resources/assets/logo.png';
 
 export default function Welcome() {
-    const { auth } = usePage<SharedData>().props;
     const { appName } = usePage().props as { appName?: string };
 
     return (
