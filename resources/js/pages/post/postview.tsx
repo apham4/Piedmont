@@ -206,7 +206,7 @@ export default function Post() {
                     {/* Comments */}
                     <div>
                         {sortedComments && sortedComments.length > 0 ? (
-                            sortedComments.map((comment: any) => (
+                            sortedComments.map((comment: Comment) => (
                                 <div
                                     key={comment.id}
                                     className="border rounded p-3 mb-4 bg-gray-50"
@@ -235,7 +235,7 @@ export default function Post() {
                                             onClick={() => handleReaction(comment.id, 2, 1)}
                                         >
                                             👍 <span className="ml-1">
-                                                {comment.reactions ? comment.reactions.filter((r: any) => r.reaction_type === 1).length : 0}
+                                                {comment.reactions ? comment.reactions.filter((r: Reaction) => r.reaction_type === 1).length : 0}
                                             </span>
                                         </button>
                                         <button
@@ -243,7 +243,7 @@ export default function Post() {
                                             onClick={() => handleReaction(comment.id, 2, 2)}
                                         >
                                             👎 <span className="ml-1">
-                                                {comment.reactions ? comment.reactions.filter((r: any) => r.reaction_type === 2).length : 0}
+                                                {comment.reactions ? comment.reactions.filter((r: Reaction) => r.reaction_type === 2).length : 0}
                                             </span>
                                         </button>
                                     </div>
