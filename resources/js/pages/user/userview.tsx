@@ -58,7 +58,7 @@ export default function UserView() {
 
     return (
         <DefaultLayout
-            title = {user ? user.name + "\'s Page" : "View User"}
+            title = {user ? user.name + "'s Page" : "View User"}
             body = {
                 <div className="w-full">
                     <div className="flex items-center mb-6">

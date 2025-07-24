@@ -47,7 +47,7 @@ export default function Post() {
         breadcrumbs?: Category[];
         auth?: { user?: User };
     };
-    const { data, setData, post: submit, processing, errors, reset } = useForm({
+    const { data, setData, processing, errors, reset } = useForm({
         content: '',
     });
 
