@@ -19,10 +19,10 @@ class PostController extends Controller
     {
         // Fetch the post by ID and return it
         $post = Post::with(['poster', 'category', 'comments', 'comments.user', 'comments.reactions', 'reactions'])->findOrFail($id);
-        
+
         $breadcrumbs = [];
         $current = $post->category;
-        while ($current) 
+        while ($current)
         {
             $breadcrumbs[] = $current;
             $current = $current->parent;
@@ -88,6 +88,12 @@ class PostController extends Controller
     public function addReaction(Request $request, int $postId, int $reactionType)
     {
         $userId = auth()->id();
+        $post = Post::findOrFail($postId);
+
+        // Prevent liking own post
+        if ($post->user_id === $userId && $reactionType === 1) {
+            return redirect()->back()->with('error', 'You cannot like your own post.');
+        }
 
         $existing = Reaction::where([
             'user_id' => $userId,
@@ -96,10 +102,10 @@ class PostController extends Controller
             'reaction_type' => $reactionType,
         ])->first();
 
-        if ($existing) 
+        if ($existing)
         {
             $existing->delete();
-        } else 
+        } else
         {
             Reaction::create([
                 'user_id' => $userId,
@@ -137,10 +143,10 @@ class PostController extends Controller
     {
         $categorySuggestions = $this->getCategorySuggestions();
         $post = Post::findOrFail($postId);
-        
+
         $breadcrumbs = [];
         $current = $post->category;
-        while ($current) 
+        while ($current)
         {
             $breadcrumbs[] = $current->name;
             $current = $current->parent;
@@ -183,7 +189,7 @@ class PostController extends Controller
                 'category_id' => 'required|integer|exists:categories,id',
                 'content' => 'required|string',
             ]);
-            
+
             $post->update([
                 'title' => $data['title'],
                 'category_id' => $category_id,
@@ -192,6 +198,16 @@ class PostController extends Controller
 
             return redirect()->route('post.show', ['id' => $post->id]);
         }
+    }
+
+    public function delete(Request $request, int $id)
+    {
+        $post = Post::findOrFail($id);
+        if ($post->user_id !== auth()->id()) {
+            abort(403);
+        }
+        $post->delete();
+        return redirect()->route('home');
     }
 
     private function getCategorySuggestions()

@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
     Route::post('post/{id}', [PostController::class, 'update'])->name('post.update');
+    Route::post('/post/{id}/delete', [PostController::class, 'delete'])->name('post.delete');
 
     Route::get('post/{id}', [PostController::class, 'show'])->name('post.show');
 
